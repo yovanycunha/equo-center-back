@@ -1,7 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"equocenterback/initializers"
+	"log"
+
+	"github.com/gin-gonic/gin"
+)
+
+var (
+	server *gin.Engine
+)
+
+func init() {
+	initializers.LoadEnv()
+
+	server = gin.Default()
+}
 
 func main() {
-	fmt.Println("Equocenterback")
+	log.Fatal(server.Run())
 }
