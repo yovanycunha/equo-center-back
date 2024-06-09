@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"equocenterback/initializers"
+	"equocenterback/pkg/controllers"
+	"equocenterback/pkg/services"
 	"fmt"
 	"log"
 
@@ -15,7 +17,12 @@ import (
 var (
 	server *gin.Engine
 	cxt context.Context
+
+	mongoclient *mongo.Client
 	
+	practitionerColl 		*mongo.Collection
+	PractitionerService 	services.PractitionerService
+	practitionerController 	controllers.PractitionerController
 )
 
 func init() {
@@ -36,9 +43,18 @@ func init() {
 
 	fmt.Println("MongoDB connection successfully established!")
 
+	practitionerColl = mongoclient.Database("equocenter").Collection("practitioner")
+	PractitionerService = services.New(practitionerColl, ctx)
+	practitionerController = controllers.New(PractitionerService)
+
 	server = gin.Default()
 }
 
 func main() {
+	defer mongoclient.Disconnect(cxt)
+
+	basepath := server.Group("/api")
+	practitionerController.RegisterPractitionerRoutes(basepath)
+
 	log.Fatal(server.Run())
 }
