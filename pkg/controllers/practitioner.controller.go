@@ -2,17 +2,17 @@ package controllers
 
 import (
 	"equocenterback/pkg/models"
-	"equocenterback/pkg/services"
+	"equocenterback/pkg/repositories"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PractitionerController struct {
-	PractitionerService services.PractitionerService
+	PractitionerService repositories.PractitionerRepository
 }
 
-func New(pratitionerService services.PractitionerService) PractitionerController {
+func New(pratitionerService repositories.PractitionerRepository) PractitionerController {
 	return PractitionerController {
 		PractitionerService: pratitionerService,
 	}
