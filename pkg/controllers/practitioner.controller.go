@@ -47,9 +47,20 @@ func (pc *PractitionerController) GetPractitioner(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, practitioner)
 }
 
+func (pc *PractitionerController) GetAllPractitioners(ctx *gin.Context) {
+	practitioners, err := pc.PractitionerRepository.GetAllPractitioners()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"error message": err.Error() + " - No practitioners found!"})
+		return
+	}
+	
+	ctx.JSON(http.StatusOK, practitioners)
+}
+
 func (pc *PractitionerController) RegisterPractitionerRoutes(router *gin.RouterGroup) {
 	practitionerroutes := router.Group("/practitioner")
 
 	practitionerroutes.POST("/create", pc.CreatePractitioner)
 	practitionerroutes.GET("/:document", pc.GetPractitioner)
+	practitionerroutes.GET("/all", pc.GetAllPractitioners)
 }

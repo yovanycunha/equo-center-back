@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"equocenterback/pkg/models"
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,5 +34,37 @@ func (pr *PractitionerRepositoryImpl) GetPractitioner(document *string) (*models
 	err := pr.practitionerColl.FindOne(pr.ctx, query).Decode(&practitioner)
 
 	return &practitioner, err
+}
+
+func (pr *PractitionerRepositoryImpl) GetAllPractitioners() ([]*models.Practitioner, error) {
+	var practitioners []*models.Practitioner
+
+	cursor, err := pr.practitionerColl.Find(pr.ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+
+	for cursor.Next(pr.ctx) {
+		 var practitioner models.Practitioner
+
+		 err := cursor.Decode(&practitioner)
+		 if err != nil {
+			return nil, err
+		 }
+
+		 practitioners = append(practitioners, &practitioner)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	cursor.Close(pr.ctx)
+
+	if len(practitioners) == 0  {
+		return nil, errors.New("No practitioners found!")
+	}
+
+	return practitioners, nil
 }
 

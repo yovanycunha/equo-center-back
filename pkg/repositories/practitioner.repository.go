@@ -6,4 +6,5 @@ import "equocenterback/pkg/models"
 type PractitionerRepository interface {
 	CreatePractitioner(*models.Practitioner) error
 	GetPractitioner(*string) (*models.Practitioner, error)
+	GetAllPractitioners() ([]*models.Practitioner, error)
 }
