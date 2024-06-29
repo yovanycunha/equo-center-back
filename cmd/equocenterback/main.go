@@ -4,7 +4,7 @@ import (
 	"context"
 	"equocenterback/initializers"
 	"equocenterback/pkg/controllers"
-	"equocenterback/pkg/services"
+	"equocenterback/pkg/repositories"
 	"fmt"
 	"log"
 
@@ -21,7 +21,7 @@ var (
 	mongoclient *mongo.Client
 	
 	practitionerColl 		*mongo.Collection
-	PractitionerService 	services.PractitionerService
+	PractitionerService 	repositories.PractitionerRepository
 	practitionerController 	controllers.PractitionerController
 )
 
@@ -44,7 +44,7 @@ func init() {
 	fmt.Println("MongoDB connection successfully established!")
 
 	practitionerColl = mongoclient.Database("equocenter").Collection("practitioner")
-	PractitionerService = services.New(practitionerColl, ctx)
+	PractitionerService = repositories.New(practitionerColl, ctx)
 	practitionerController = controllers.New(PractitionerService)
 
 	server = gin.Default()
