@@ -9,12 +9,12 @@ import (
 )
 
 type PractitionerController struct {
-	PractitionerService repositories.PractitionerRepository
+	PractitionerRepository repositories.PractitionerRepository
 }
 
 func New(pratitionerService repositories.PractitionerRepository) PractitionerController {
 	return PractitionerController {
-		PractitionerService: pratitionerService,
+		PractitionerRepository: pratitionerService,
 	}
 }
 
@@ -26,7 +26,7 @@ func (pc *PractitionerController) CreatePractitioner(ctx *gin.Context) {
 		return
 	}
 
-	err := pc.PractitionerService.CreatePractitioner(&practitioner)
+	err := pc.PractitionerRepository.CreatePractitioner(&practitioner)
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"error message": err.Error()})
 		return
@@ -35,8 +35,21 @@ func (pc *PractitionerController) CreatePractitioner(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"success message": "Practitioner created successfully!"})
 }
 
+func (pc *PractitionerController) GetPractitioner(ctx *gin.Context) {
+	document := ctx.Param("document")
+
+	practitioner, err := pc.PractitionerRepository.GetPractitioner((&document))
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"error message": err.Error() + " - Practitioner not found!"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, practitioner)
+}
+
 func (pc *PractitionerController) RegisterPractitionerRoutes(router *gin.RouterGroup) {
 	practitionerroutes := router.Group("/practitioner")
 
 	practitionerroutes.POST("/create", pc.CreatePractitioner)
+	practitionerroutes.GET("/:document", pc.GetPractitioner)
 }
