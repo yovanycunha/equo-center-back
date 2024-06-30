@@ -22,6 +22,15 @@ func New(practitionerColl *mongo.Collection, ctx context.Context) *PractitionerR
 }
 
 func (pr *PractitionerRepositoryImpl) CreatePractitioner(practitioner *models.Practitioner) error {
+	var practitionerFound models.Practitioner
+
+	query := bson.D{bson.E{Key: "document", Value: practitioner.Document}}
+	errFound := pr.practitionerColl.FindOne(pr.ctx, query).Decode(&practitionerFound)
+	
+	if errFound == nil {
+		return errors.New("practitioner with this document already exists")
+	}
+
 	_, err := pr.practitionerColl.InsertOne(pr.ctx, practitioner)
 
 	return err
@@ -62,7 +71,7 @@ func (pr *PractitionerRepositoryImpl) GetAllPractitioners() ([]*models.Practitio
 	cursor.Close(pr.ctx)
 
 	if len(practitioners) == 0  {
-		return nil, errors.New("No practitioners found!")
+		return nil, errors.New("no practitioners found")
 	}
 
 	return practitioners, nil
@@ -83,7 +92,7 @@ func (pr *PractitionerRepositoryImpl) UpdatePractitioner(practitioner *models.Pr
 	
 	result, _ := pr.practitionerColl.UpdateOne(pr.ctx, filter, update)
 	if result.MatchedCount != 1 {
-		return errors.New("Practitioner not found!")
+		return errors.New("practitioner not found")
 	}
 	
 	return nil
@@ -93,7 +102,7 @@ func (pr *PractitionerRepositoryImpl) DeletePractitioner(document *string) error
 	filter := bson.D{bson.E{Key: "document", Value: document}}
 	result, _ := pr.practitionerColl.DeleteOne(pr.ctx, filter)
 	if result.DeletedCount != 1 {
-		return errors.New("Practitioner not found!")
+		return errors.New("practitioner not found")
 	}
 
 	return nil
