@@ -68,3 +68,23 @@ func (pr *PractitionerRepositoryImpl) GetAllPractitioners() ([]*models.Practitio
 	return practitioners, nil
 }
 
+func (pr *PractitionerRepositoryImpl) UpdatePractitioner(practitioner *models.Practitioner) error {
+	filter := bson.D{bson.E{Key: "document", Value: practitioner.Document}}
+	update := bson.D{bson.E{Key: "$set", Value: bson.D{
+		bson.E{Key: "name", Value: practitioner.Name},
+		bson.E{Key: "birthdate", Value: practitioner.BirthDate},
+		bson.E{Key: "age", Value: practitioner.Age},
+		bson.E{Key: "gender", Value: practitioner.Gender},
+		bson.E{Key: "admissiondate", Value: practitioner.AdmissionDate},
+		bson.E{Key: "cid", Value: practitioner.CID},
+		bson.E{Key: "sponsor", Value: practitioner.Sponsor},
+		bson.E{Key: "address", Value: practitioner.Address},
+	}}}
+	
+	result, _ := pr.practitionerColl.UpdateOne(pr.ctx, filter, update)
+	if result.MatchedCount != 1 {
+		return errors.New("Practitioner not found!")
+	}
+	
+	return nil
+}

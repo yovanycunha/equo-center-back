@@ -57,10 +57,30 @@ func (pc *PractitionerController) GetAllPractitioners(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, practitioners)
 }
 
+func (pc *PractitionerController) UpdatePractitioner(ctx *gin.Context) {
+	var practitioner models.Practitioner
+
+	if err := ctx.ShouldBindJSON(&practitioner)
+	err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	err := pc.PractitionerRepository.UpdatePractitioner(&practitioner)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Practitioner updated successfully!"})
+
+}
+
 func (pc *PractitionerController) RegisterPractitionerRoutes(router *gin.RouterGroup) {
 	practitionerroutes := router.Group("/practitioner")
 
 	practitionerroutes.POST("/create", pc.CreatePractitioner)
 	practitionerroutes.GET("/:document", pc.GetPractitioner)
 	practitionerroutes.GET("/all", pc.GetAllPractitioners)
+	practitionerroutes.PATCH("/update", pc.UpdatePractitioner)
 }
