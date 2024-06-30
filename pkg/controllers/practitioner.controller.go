@@ -73,7 +73,17 @@ func (pc *PractitionerController) UpdatePractitioner(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Practitioner updated successfully!"})
+}
 
+func (pc *PractitionerController) DeletePractitioner(ctx *gin.Context) {
+	document := ctx.Param("document")
+	err := pc.PractitionerRepository.DeletePractitioner(&document)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Practitioner deleted successfully!"})
 }
 
 func (pc *PractitionerController) RegisterPractitionerRoutes(router *gin.RouterGroup) {
@@ -83,4 +93,5 @@ func (pc *PractitionerController) RegisterPractitionerRoutes(router *gin.RouterG
 	practitionerroutes.GET("/:document", pc.GetPractitioner)
 	practitionerroutes.GET("/all", pc.GetAllPractitioners)
 	practitionerroutes.PATCH("/update", pc.UpdatePractitioner)
+	practitionerroutes.DELETE("/:document", pc.DeletePractitioner)
 }

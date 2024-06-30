@@ -88,3 +88,13 @@ func (pr *PractitionerRepositoryImpl) UpdatePractitioner(practitioner *models.Pr
 	
 	return nil
 }
+
+func (pr *PractitionerRepositoryImpl) DeletePractitioner(document *string) error {
+	filter := bson.D{bson.E{Key: "document", Value: document}}
+	result, _ := pr.practitionerColl.DeleteOne(pr.ctx, filter)
+	if result.DeletedCount != 1 {
+		return errors.New("Practitioner not found!")
+	}
+
+	return nil
+}
