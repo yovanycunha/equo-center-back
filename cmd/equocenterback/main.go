@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -47,7 +48,17 @@ func init() {
 	PractitionerService = repositories.New(practitionerColl, ctx)
 	practitionerController = controllers.New(PractitionerService)
 
+
+
 	server = gin.Default()
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Access-Control-Allow-Origin"}
+    config.ExposeHeaders = []string{"Content-Length"}
+    config.AllowCredentials = true
+
+	server.Use(cors.New(config))
+
 }
 
 func main() {
