@@ -31,7 +31,7 @@ func init() {
 
 	ctx := context.TODO()
 
-	mongoConn := options.Client().ApplyURI("mongodb://localhost:27017/")
+	mongoConn := options.Client().ApplyURI("mongodb+srv://admin:416n3QPWlJuISzrC@equocenter.2c5e2.mongodb.net/?retryWrites=true&w=majority&appName=equocenter")
 	mongoclient, err := mongo.Connect(ctx, mongoConn)
 	if err != nil {
 		log.Fatal(err)
