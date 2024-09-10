@@ -77,8 +77,8 @@ func (pr *PractitionerRepositoryImpl) GetAllPractitioners() ([]*models.Practitio
 	return practitioners, nil
 }
 
-func (pr *PractitionerRepositoryImpl) UpdatePractitioner(practitioner *models.Practitioner) error {
-	filter := bson.D{bson.E{Key: "document", Value: practitioner.Document}}
+func (pr *PractitionerRepositoryImpl) UpdatePractitioner(practitioner *models.PractitionerUpdate) error {
+	filter := bson.D{bson.E{Key: "document", Value: practitioner.OldDocument}}
 	update := bson.D{bson.E{Key: "$set", Value: bson.D{
 		bson.E{Key: "name", Value: practitioner.Name},
 		bson.E{Key: "birthdate", Value: practitioner.BirthDate},
@@ -88,6 +88,7 @@ func (pr *PractitionerRepositoryImpl) UpdatePractitioner(practitioner *models.Pr
 		bson.E{Key: "cid", Value: practitioner.CID},
 		bson.E{Key: "sponsor", Value: practitioner.Sponsor},
 		bson.E{Key: "address", Value: practitioner.Address},
+		bson.E{Key: "document", Value: practitioner.NewDocument},
 	}}}
 	
 	result, _ := pr.practitionerColl.UpdateOne(pr.ctx, filter, update)

@@ -58,8 +58,8 @@ func (pc *PractitionerController) GetAllPractitioners(ctx *gin.Context) {
 }
 
 func (pc *PractitionerController) UpdatePractitioner(ctx *gin.Context) {
-	var practitioner models.Practitioner
-
+	var practitioner models.PractitionerUpdate
+	
 	if err := ctx.ShouldBindJSON(&practitioner)
 	err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
