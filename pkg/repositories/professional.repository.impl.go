@@ -76,3 +76,19 @@ func (pc *ProfessionalRepositoryImpl) GetAllProfessionals() ([]*models.Professio
 
 	return professionals, nil
 }
+
+func (pr *ProfessionalRepositoryImpl) UpdateProfessional(professional *models.ProfessionalUpdate) error {
+	filter := bson.D{bson.E{Key: "document", Value: professional.OldDocument}}
+	update := bson.D{bson.E{Key: "$set", Value: bson.D{
+		bson.E{Key: "name", Value: professional.Name},
+		bson.E{Key: "specialty", Value: professional.Specialty},
+		bson.E{Key: "document", Value: professional.NewDocument},
+	}}}
+
+	result,_ := pr.professionalColl.UpdateOne(pr.ctx, filter, update)
+	if result.MatchedCount != 1 {
+		return errors.New("professional not found")
+	}
+
+	return nil
+}

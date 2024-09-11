@@ -57,10 +57,29 @@ func (pc *ProfessionalController) getAllProfessionals(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, professionals)
 }
 
+func (pc *ProfessionalController) UpdateProfessional(ctx *gin.Context)  {
+	var professional models.ProfessionalUpdate
+
+	if err := ctx.ShouldBindJSON(&professional)
+	err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error message": err.Error() })
+		return
+	}
+
+	err := pc.ProfessionalRepository.UpdateProfessional(&professional)
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"error message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "professional updated successfully"})
+}
+
 func (pc *ProfessionalController) RegisterProfessionalRoutes(router *gin.RouterGroup){
 	professionalroutes := router.Group("/professional")
 
 	professionalroutes.POST("/create", pc.CreateProfessional)
 	professionalroutes.GET("/:document", pc.getProfessional)
 	professionalroutes.GET("/all", pc.getAllProfessionals)
+	professionalroutes.PATCH("/update", pc.UpdateProfessional)
 }
