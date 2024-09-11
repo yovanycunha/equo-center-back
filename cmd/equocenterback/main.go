@@ -24,6 +24,10 @@ var (
 	practitionerColl 		*mongo.Collection
 	PractitionerService 	repositories.PractitionerRepository
 	practitionerController 	controllers.PractitionerController
+	
+	professionalColl 		*mongo.Collection
+	professionalService		repositories.ProfessionalRepository
+	professionalController 	controllers.ProfessionalController
 )
 
 func init() {
@@ -48,6 +52,10 @@ func init() {
 	PractitionerService = repositories.New(practitionerColl, ctx)
 	practitionerController = controllers.New(PractitionerService)
 
+	professionalColl = mongoclient.Database("equocenter").Collection("professional")
+	professionalService = repositories.NewProfessionalRepo(professionalColl, ctx)
+	professionalController = controllers.NewProfessionalController(professionalService)
+
 
 
 	server = gin.Default()
@@ -66,6 +74,7 @@ func main() {
 
 	basepath := server.Group("/api")
 	practitionerController.RegisterPractitionerRoutes(basepath)
+	professionalController.RegisterProfessionalRoutes(basepath)
 
 	log.Fatal(server.Run())
 }
