@@ -44,3 +44,35 @@ func (pr *ProfessionalRepositoryImpl) GetProfessional(document *string) (*models
 
 	return &professional, err
 }
+
+func (pc *ProfessionalRepositoryImpl) GetAllProfessionals() ([]*models.Professional, error) {
+	var professionals []*models.Professional
+
+	cursor, err := pc.professionalColl.Find(pc.ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+
+	for cursor.Next(pc.ctx) {
+		var professional models.Professional
+
+		err := cursor.Decode(&professional)
+		if err != nil {
+			return nil, err
+		}
+
+		professionals = append(professionals, &professional)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	cursor.Close(pc.ctx)
+
+	if len(professionals) == 0 {
+		return nil, errors.New("no professionals found")
+	}
+
+	return professionals, nil
+}

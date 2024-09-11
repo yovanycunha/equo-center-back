@@ -41,9 +41,20 @@ func (pc *ProfessionalController) getProfessional(ctx *gin.Context) {
 	professional, err := pc.ProfessionalRepository.GetProfessional((&document))
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"error message": err.Error() + " - No professional found"})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, professional)
+}
+
+func (pc *ProfessionalController) getAllProfessionals(ctx *gin.Context) {
+	professionals, err := pc.ProfessionalRepository.GetAllProfessionals()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"error message": err.Error() + " - No professionals found"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, professionals)
 }
 
 func (pc *ProfessionalController) RegisterProfessionalRoutes(router *gin.RouterGroup){
@@ -51,4 +62,5 @@ func (pc *ProfessionalController) RegisterProfessionalRoutes(router *gin.RouterG
 
 	professionalroutes.POST("/create", pc.CreateProfessional)
 	professionalroutes.GET("/:document", pc.getProfessional)
+	professionalroutes.GET("/all", pc.getAllProfessionals)
 }
