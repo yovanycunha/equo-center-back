@@ -35,8 +35,20 @@ func (pc *ProfessionalController) CreateProfessional(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "professional created successfully"})
 }
 
+func (pc *ProfessionalController) getProfessional(ctx *gin.Context) {
+	document := ctx.Param("document")
+
+	professional, err := pc.ProfessionalRepository.GetProfessional((&document))
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"error message": err.Error() + " - No professional found"})
+	}
+
+	ctx.JSON(http.StatusOK, professional)
+}
+
 func (pc *ProfessionalController) RegisterProfessionalRoutes(router *gin.RouterGroup){
 	professionalroutes := router.Group("/professional")
 
 	professionalroutes.POST("/create", pc.CreateProfessional)
+	professionalroutes.GET("/:document", pc.getProfessional)
 }
