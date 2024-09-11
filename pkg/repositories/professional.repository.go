@@ -7,4 +7,5 @@ type ProfessionalRepository interface {
 	GetProfessional(*string) (*models.Professional, error)
 	GetAllProfessionals() ([]*models.Professional, error)
 	UpdateProfessional(*models.ProfessionalUpdate) error
+	DeleteProfessional(*string) error
 }

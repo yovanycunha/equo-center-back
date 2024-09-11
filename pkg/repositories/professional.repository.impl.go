@@ -92,3 +92,13 @@ func (pr *ProfessionalRepositoryImpl) UpdateProfessional(professional *models.Pr
 
 	return nil
 }
+
+func (pc *ProfessionalRepositoryImpl) DeleteProfessional(document *string) error {
+	filter := bson.D{bson.E{Key: "document", Value: document}}
+	result, _ := pc.professionalColl.DeleteOne(pc.ctx, filter)
+	if result.DeletedCount != 1 {
+		return errors.New("professional not found")
+	}
+
+	return nil
+}

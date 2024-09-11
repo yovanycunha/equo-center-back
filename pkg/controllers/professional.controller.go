@@ -75,6 +75,17 @@ func (pc *ProfessionalController) UpdateProfessional(ctx *gin.Context)  {
 	ctx.JSON(http.StatusOK, gin.H{"message": "professional updated successfully"})
 }
 
+func (pc *ProfessionalController) DeleteProfessional(ctx *gin.Context) {
+	document := ctx.Param("document")
+	err := pc.ProfessionalRepository.DeleteProfessional(&document)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return 
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "professional deleted successfully"})
+}
+
 func (pc *ProfessionalController) RegisterProfessionalRoutes(router *gin.RouterGroup){
 	professionalroutes := router.Group("/professional")
 
@@ -82,4 +93,5 @@ func (pc *ProfessionalController) RegisterProfessionalRoutes(router *gin.RouterG
 	professionalroutes.GET("/:document", pc.getProfessional)
 	professionalroutes.GET("/all", pc.getAllProfessionals)
 	professionalroutes.PATCH("/update", pc.UpdateProfessional)
+	professionalroutes.DELETE("/:document", pc.DeleteProfessional)
 }
