@@ -83,6 +83,7 @@ func (pr *ProfessionalRepositoryImpl) UpdateProfessional(professional *models.Pr
 		bson.E{Key: "name", Value: professional.Name},
 		bson.E{Key: "specialty", Value: professional.Specialty},
 		bson.E{Key: "document", Value: professional.NewDocument},
+		bson.E{Key: "iscertified", Value: professional.IsCertified},
 	}}}
 
 	result,_ := pr.professionalColl.UpdateOne(pr.ctx, filter, update)
