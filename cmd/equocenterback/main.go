@@ -28,6 +28,10 @@ var (
 	professionalColl 		*mongo.Collection
 	professionalService		repositories.ProfessionalRepository
 	professionalController 	controllers.ProfessionalController
+
+	activityColl 		*mongo.Collection
+	activityService		repositories.ActivityRepository
+	activityController 	controllers.ActivityController
 )
 
 func init() {
@@ -56,7 +60,9 @@ func init() {
 	professionalService = repositories.NewProfessionalRepo(professionalColl, ctx)
 	professionalController = controllers.NewProfessionalController(professionalService)
 
-
+	activityColl = mongoclient.Database("equocenter").Collection("activity")
+	activityService = repositories.NewActivityRepository(activityColl, ctx)
+	activityController = controllers.NewActivityController(activityService)
 
 	server = gin.Default()
 	config := cors.DefaultConfig()
@@ -75,6 +81,7 @@ func main() {
 	basepath := server.Group("/api")
 	practitionerController.RegisterPractitionerRoutes(basepath)
 	professionalController.RegisterProfessionalRoutes(basepath)
+	activityController.RegisterActivityRoutes(basepath)
 
 	log.Fatal(server.Run())
 }
