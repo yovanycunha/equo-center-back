@@ -45,9 +45,22 @@ func (a *ActivityController) GetAllActivities(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, activities)
 }
 
+func (a *ActivityController) GetActivity(ctx *gin.Context){
+	id := ctx.Param("id")
+
+	activity, err := a.ActivityRepository.GetActivity((&id))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error message": err.Error() + " - no activity found"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, activity)
+}
+
 func (ac *ActivityController) RegisterActivityRoutes(router *gin.RouterGroup) {
 	activityroutes := router.Group("/activity")
 
 	activityroutes.POST("/create", ac.CreateActivity)
 	activityroutes.GET("/all", ac.GetAllActivities)
+	activityroutes.GET("/:id", ac.GetActivity)
 }

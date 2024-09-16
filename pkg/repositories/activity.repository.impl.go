@@ -5,6 +5,7 @@ import (
 	"equocenterback/pkg/models"
 	"errors"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -57,4 +58,17 @@ func (ar *ActivityRepositoryImpl) GetAllActivities() ([]*models.Activity, error)
 	}
 
 	return activities, nil
+}
+
+func (ar *ActivityRepositoryImpl) GetActivity(id *string) (*models.Activity, error) {
+	var activity models.Activity
+	objId, errorObj := primitive.ObjectIDFromHex(*id)
+	if errorObj != nil {
+		return nil, errorObj
+	}
+
+	query := bson.D{bson.E{Key: "_id", Value: objId}}
+	err := ar.activityColl.FindOne(ar.ctx, query).Decode(&activity)
+
+	return &activity, err
 }
