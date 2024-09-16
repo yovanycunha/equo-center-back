@@ -94,3 +94,18 @@ func (ar *ActivityRepositoryImpl) UpdateActivity(activity *models.Activity) erro
 
 	return nil
 }
+
+func (ar *ActivityRepositoryImpl) DeleteActivity(id *string) error {
+	objectId, errorObj := primitive.ObjectIDFromHex(*id)
+	if errorObj != nil {
+		return errorObj
+	}
+
+	filter := bson.D{bson.E{Key: "_id", Value: objectId}}
+	result,_ := ar.activityColl.DeleteOne(ar.ctx, filter)
+	if result.DeletedCount != 1 {
+		return errors.New("no activity found")
+	}
+
+	return nil
+}

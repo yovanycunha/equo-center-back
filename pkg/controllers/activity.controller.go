@@ -75,6 +75,19 @@ func (a *ActivityController) UpdateActivity(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message":"activity updated successfully"})
 }
 
+func (a *ActivityController) DeleteActivity(ctx *gin.Context) {
+	id := ctx.Param("id")
+	
+	err := a.ActivityRepository.DeleteActivity(&id)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message":"activity deleted successfully"})
+}
+
+
 func (ac *ActivityController) RegisterActivityRoutes(router *gin.RouterGroup) {
 	activityroutes := router.Group("/activity")
 
@@ -82,4 +95,5 @@ func (ac *ActivityController) RegisterActivityRoutes(router *gin.RouterGroup) {
 	activityroutes.GET("/all", ac.GetAllActivities)
 	activityroutes.GET("/:id", ac.GetActivity)
 	activityroutes.PATCH("/update", ac.UpdateActivity)
+	activityroutes.DELETE("/:id", ac.DeleteActivity)
 }

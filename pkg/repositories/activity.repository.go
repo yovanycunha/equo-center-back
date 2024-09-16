@@ -7,5 +7,5 @@ type ActivityRepository interface {
 	GetActivity(*string) (*models.Activity, error)
 	GetAllActivities() ([]*models.Activity, error)
 	UpdateActivity(*models.Activity) error
-	// DeleteActivity(*string) error
+	DeleteActivity(*string) error
 }
