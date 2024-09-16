@@ -57,10 +57,29 @@ func (a *ActivityController) GetActivity(ctx *gin.Context){
 	ctx.JSON(http.StatusOK, activity)
 }
 
+func (a *ActivityController) UpdateActivity(ctx *gin.Context) {
+	var activity models.Activity
+
+	if err := ctx.ShouldBindJSON(&activity)
+	err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"error message": err.Error()})
+		return
+	}
+
+	err := a.ActivityRepository.UpdateActivity(&activity)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message":"activity updated successfully"})
+}
+
 func (ac *ActivityController) RegisterActivityRoutes(router *gin.RouterGroup) {
 	activityroutes := router.Group("/activity")
 
 	activityroutes.POST("/create", ac.CreateActivity)
 	activityroutes.GET("/all", ac.GetAllActivities)
 	activityroutes.GET("/:id", ac.GetActivity)
+	activityroutes.PATCH("/update", ac.UpdateActivity)
 }

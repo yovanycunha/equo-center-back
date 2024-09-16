@@ -72,3 +72,25 @@ func (ar *ActivityRepositoryImpl) GetActivity(id *string) (*models.Activity, err
 
 	return &activity, err
 }
+
+func (ar *ActivityRepositoryImpl) UpdateActivity(activity *models.Activity) error {
+	objectId, errorObj := primitive.ObjectIDFromHex(activity.ID.Hex())
+	if errorObj != nil {
+		return errorObj
+	}
+
+	filter := bson.D{bson.E{Key: "_id", Value: objectId}}
+	update := bson.D{bson.E{Key: "$set", Value: bson.D{
+		bson.E{Key: "purpose", Value: activity.Purpose},
+		bson.E{Key: "professionals", Value: activity.Professionals},
+		bson.E{Key: "actions", Value: activity.Actions},
+		bson.E{Key: "feedback", Value: activity.Feedback},
+	}}}
+
+	result,_ := ar.activityColl.UpdateOne(ar.ctx, filter, update)
+	if result.MatchedCount != 1 {
+		return errors.New("no activity found")
+	}
+
+	return nil
+}
