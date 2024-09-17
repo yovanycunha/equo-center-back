@@ -85,6 +85,7 @@ func (ar *ActivityRepositoryImpl) UpdateActivity(activity *models.Activity) erro
 		bson.E{Key: "professionals", Value: activity.Professionals},
 		bson.E{Key: "actions", Value: activity.Actions},
 		bson.E{Key: "feedback", Value: activity.Feedback},
+		bson.E{Key: "title", Value: activity.Title},
 	}}}
 
 	result,_ := ar.activityColl.UpdateOne(ar.ctx, filter, update)
