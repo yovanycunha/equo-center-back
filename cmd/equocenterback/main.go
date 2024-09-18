@@ -32,6 +32,10 @@ var (
 	activityColl 		*mongo.Collection
 	activityService		repositories.ActivityRepository
 	activityController 	controllers.ActivityController
+
+	userColl 		*mongo.Collection
+	userService		repositories.UserRepository
+	userController 	controllers.UserController
 )
 
 func init() {
@@ -64,6 +68,10 @@ func init() {
 	activityService = repositories.NewActivityRepository(activityColl, ctx)
 	activityController = controllers.NewActivityController(activityService)
 
+	userColl = mongoclient.Database("equocenter").Collection("user")
+	userService = repositories.NewUserRepo(userColl, ctx)
+	userController = controllers.NewUserController(userService)
+
 	server = gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
@@ -82,6 +90,7 @@ func main() {
 	practitionerController.RegisterPractitionerRoutes(basepath)
 	professionalController.RegisterProfessionalRoutes(basepath)
 	activityController.RegisterActivityRoutes(basepath)
+	userController.RegisterUserRoutes(basepath)
 
 	log.Fatal(server.Run())
 }
